@@ -9,6 +9,40 @@ app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+const mongoose = require('mongoose');
+
+// 1. Connection to Atlas
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("🍃 LogicDraft is LIVE on MongoDB Atlas!"))
+  .catch(err => console.error("Database connection failed:", err));
+
+// 2. Define the Schema (The Blueprint for a Diagram)
+const diagramSchema = new mongoose.Schema({
+  prompt: String,
+  mermaidCode: String,
+  createdAt: { type: Date, default: Date.now }
+});
+const Diagram = mongoose.model('Diagram', diagramSchema);
+
+// 3. Update your Generate Route
+app.post('/api/generate', async (req, res) => {
+    const { prompt } = req.body;
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const systemPrompt = `Convert to Mermaid.js syntax. Output ONLY code.`; 
+        
+        const result = await model.generateContent(`${systemPrompt}\nUser Request: ${prompt}`);
+        const mermaidCode = result.response.text().trim();
+
+        // SAVE TO CLOUD
+        const newDoc = await Diagram.create({ prompt, mermaidCode });
+
+        res.json(newDoc);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.post('/api/generate', async (req, res) => {
     const { prompt, diagramType } = req.body;
 
