@@ -13,16 +13,22 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("🍃 LogicDraft is LIVE on MongoDB Atlas!"))
   .catch(err => console.error("❌ DB Connection Failed:", err.message));
 
+// ADDED: userId to the schema so diagrams belong to specific accounts
 const Diagram = mongoose.model('Diagram', new mongoose.Schema({
   prompt: String,
   mermaidCode: String,
+  userId: String, 
   createdAt: { type: Date, default: Date.now }
 }));
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/api/generate', async (req, res) => {
-    const { prompt } = req.body;
+    // ADDED: Expect userId from the frontend
+    const { prompt, userId } = req.body;
+    
+    if(!userId) return res.status(401).json({ error: "Please log in first!" });
+
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
         const systemPrompt = "Convert this to Mermaid.js code. Output ONLY raw code, no markdown.";
@@ -30,7 +36,9 @@ app.post('/api/generate', async (req, res) => {
         const text = result.response.text().trim();
 
         const cleanCode = text.replace(/```mermaid/g, "").replace(/```/g, "").trim();
-        const newDoc = await Diagram.create({ prompt, mermaidCode: cleanCode });
+        
+        // ADDED: Save the diagram with the user's specific ID attached
+        const newDoc = await Diagram.create({ prompt, mermaidCode: cleanCode, userId });
         
         console.log("✅ Success! Diagram saved.");
         res.json(newDoc);
@@ -41,8 +49,12 @@ app.post('/api/generate', async (req, res) => {
 });
 
 app.get('/api/diagrams', async (req, res) => {
+    // ADDED: Filter history by the logged-in user's ID
+    const { userId } = req.query;
+    if(!userId) return res.json([]); 
+
     try {
-        const history = await Diagram.find().sort({ createdAt: -1 });
+        const history = await Diagram.find({ userId }).sort({ createdAt: -1 });
         res.json(history);
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
