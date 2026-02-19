@@ -18,11 +18,14 @@ function App() {
   const [loading, setLoading] = useState(false);
   const chartRef = useRef(null);
 
+  // The environment variable makes this work both on your PC and on Vercel
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
   useEffect(() => { fetchHistory(); }, []);
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/diagrams');
+      const res = await axios.get(`${API_URL}/api/diagrams`);
       setHistory(res.data);
     } catch (err) { console.error("History fetch failed"); }
   };
@@ -30,7 +33,7 @@ function App() {
   const handleDelete = async (id, e) => {
     e.stopPropagation(); 
     if(window.confirm("Delete this diagram?")) {
-      await axios.delete(`http://localhost:5000/api/diagrams/${id}`);
+      await axios.delete(`${API_URL}/api/diagrams/${id}`);
       fetchHistory();
     }
   };
@@ -67,10 +70,10 @@ function App() {
     if (!prompt) return;
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/generate', { prompt });
+      const response = await axios.post(`${API_URL}/api/generate`, { prompt });
       setDiagramCode(response.data.mermaidCode);
       fetchHistory();
-    } catch (error) { alert("Server error"); }
+    } catch (error) { alert("Server error. The Brain might be sleeping."); }
     finally { setLoading(false); }
   };
 
@@ -134,18 +137,15 @@ const styles = {
   historyList: { flex: 1, overflowY: 'auto' },
   historyItem: { padding: '12px', backgroundColor: '#1e293b', borderRadius: '8px', marginBottom: '10px', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   historyText: { fontSize: '12px', margin: 0 },
-  
   main: { flexGrow: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#f1f5f9', height: '100vh', overflow: 'hidden' },
   header: { backgroundColor: '#fff', borderBottom: '1px solid #e2e8f0', padding: '15px 30px' },
   headerContent: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  title: { fontSize: '22px', fontWeight: 'bold', margin: 0 },
+  title: { fontSize: '22px', fontWeight: 'bold', margin: 0, color: '#0f172a' },
   downloadBtn: { display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', backgroundColor: '#10b981', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: '600' },
-  
   workspace: { padding: '30px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '25px', flexGrow: 1 },
   inputCard: { backgroundColor: '#fff', padding: '25px', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' },
   textarea: { width: '100%', minHeight: '100px', padding: '15px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '16px', outline: 'none' },
   button: { marginTop: '15px', width: '100%', padding: '14px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' },
-  
   canvasCard: { backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'center' },
   mermaidWrapper: { width: '100%', display: 'flex', justifyContent: 'center' }
 };

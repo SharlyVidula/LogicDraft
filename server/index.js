@@ -5,6 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 require('dotenv').config();
 
 const app = express();
+// Enable CORS for your Vercel frontend later
 app.use(cors());
 app.use(express.json());
 
@@ -53,5 +54,6 @@ app.delete('/api/diagrams/:id', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Brain active on port 5000`));
+// The dynamic port for deployment
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Brain active on port ${PORT}`));
