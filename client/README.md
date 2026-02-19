@@ -1,16 +1,41 @@
-# React + Vite
+# 🧠 LogicDraft AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+LogicDraft is a full-stack, AI-powered web application that instantly converts natural language prompts into professional, production-ready diagrams and flowcharts. 
 
-Currently, two official plugins are available:
+Built with the MERN stack and powered by Google's Gemini AI, this application eliminates the need for manual diagramming by generating raw Mermaid.js syntax and rendering it flawlessly on the fly. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Key Features
 
-## React Compiler
+* **🤖 AI Diagram Generation:** Leverages Google's `gemini-flash-latest` model to translate complex text prompts into precise Mermaid.js code.
+* **📊 Live Rendering:** Dynamically parses and renders flowcharts, sequence diagrams, and ER diagrams natively in the browser.
+* **🔒 Secure User Authentication:** Integrated with **Clerk** for seamless, secure Google OAuth and Email login.
+* **💾 Private Cloud Storage:** Connects to **MongoDB Atlas** to securely save and retrieve user-specific diagram history.
+* **📄 High-Fidelity PDF Exports:** Utilizes advanced HTML-to-canvas rendering (`html-to-image` + `jspdf`) to bypass standard SVG security limitations, allowing users to export massive, high-resolution diagrams.
+* **📱 Fully Responsive UI:** Features a mobile-first, responsive workspace with a collapsible sidebar for mobile devices.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+**Frontend:**
+* React.js (Vite)
+* Clerk (Authentication)
+* Mermaid.js (Diagram Rendering)
+* HTML-to-Image & jsPDF (Exporting)
+* Lucide React (Icons)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Backend:**
+* Node.js & Express.js
+* MongoDB & Mongoose (Database)
+* Google Generative AI SDK (Gemini)
+
+**Deployment:**
+* Frontend: Vercel
+* Backend: Render
+
+## 🚀 Local Development Setup
+
+Follow these steps to run LogicDraft locally on your machine.
+
+### 1. Clone the repository
+```bash
+git clone [https://github.com/yourusername/LogicDraft.git](https://github.com/yourusername/LogicDraft.git)
+cd LogicDraft
