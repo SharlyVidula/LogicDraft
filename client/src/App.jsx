@@ -29,6 +29,12 @@ function App() {
     } catch (err) { console.error("Could not fetch history"); }
   };
 
+  const handleDelete = async (id, e) => {
+  e.stopPropagation(); // Prevents loading the diagram when clicking delete
+  await axios.delete(`http://localhost:5000/api/diagrams/${id}`);
+  fetchHistory();
+};
+
   // Re-render diagram whenever code changes
   useEffect(() => {
     if (chartRef.current) {
